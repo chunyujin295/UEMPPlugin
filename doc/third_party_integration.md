@@ -52,9 +52,9 @@ CMakeLists.txt                       全局配置 + include(cmake/3rd.cmake) + a
 1. 检查 `3rd/lib/openssl/<platform>/lib/` 下是否存在预编译库
 2. 存在 → 直接使用（仓库已包含，克隆即用）
 3. 不存在 → `execute_process` 调用构建脚本从源码编译并安装到此目录（一次性）
-3. 创建 `OpenSSL_SSL` / `OpenSSL_Crypto` 为 `STATIC IMPORTED GLOBAL`
-4. 创建 `OpenSSL::SSL` / `OpenSSL::Crypto` ALIAS
-5. 设置 `OPENSSL_FOUND=TRUE`（配合 `cmake/FindOpenSSL.cmake` 拦截 curl 的重复搜索）
+4. 创建 `OpenSSL_SSL` / `OpenSSL_Crypto` 为 `STATIC IMPORTED GLOBAL`
+5. 创建 `OpenSSL::SSL` / `OpenSSL::Crypto` ALIAS
+6. 设置 `OPENSSL_FOUND=TRUE`（配合 `cmake/FindOpenSSL.cmake` 拦截 curl 的重复搜索）
 
 ### 构建命令（来自官方 INSTALL.md）
 
@@ -80,7 +80,7 @@ common
     ├── spdlog               (add_subdirectory)
     ├── yaml-cpp             (add_subdirectory)
     ├── OpenSSL::SSL         (IMPORTED GLOBAL, cmake/3rd.cmake 创建)
-    │     └── libssl         (build/openssl/lib/)
+    │     └── libssl         (3rd/lib/openssl/<platform>/lib/)
     ├── OpenSSL::Crypto      (IMPORTED GLOBAL)
     │     └── libcrypto
     └── libcurl              (add_subdirectory)
