@@ -59,12 +59,15 @@ perl Configure VC-WIN64A ^
     no-engine no-idea no-camellia no-ssl3 ^
     no-heartbeats no-gost no-deprecated ^
     no-comp no-dtls no-psk no-srp no-dso no-dsa no-rc2 no-des
+if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
 echo Building...
 nmake
+if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
 echo Installing...
 nmake install_sw
+if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 echo Done via source build.
 
 :done
