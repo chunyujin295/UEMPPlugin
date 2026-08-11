@@ -21,7 +21,6 @@ if [ -f "$PREFIX/lib/libssl.a" ]; then
 fi
 
 cd "$SRC"
-[ -f Makefile ] && make clean 2>/dev/null || true
 
 ./Configure \
     --prefix="$PREFIX" --openssldir="$PREFIX/ssl" --libdir=lib \
