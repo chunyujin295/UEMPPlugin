@@ -53,23 +53,20 @@ if(NOT TARGET OpenSSL::SSL)
     set(_inc_dir "${_ssl_prefix}/include")
 
     if(NOT EXISTS "${_ssl_lib}")
-        message(STATUS "Building OpenSSL from source (one-time)...")
+        message(STATUS "Building OpenSSL from source...")
         if(MSVC)
             execute_process(
                 COMMAND "${_build_cmd}" "${_ssl_prefix}"
                 WORKING_DIRECTORY "${_repo_root}"
-                RESULT_VARIABLE _r
-                OUTPUT_VARIABLE _out ERROR_VARIABLE _err)
+                RESULT_VARIABLE _r)
         else()
             execute_process(
                 COMMAND bash "${_build_cmd}" "${_ssl_prefix}"
                 WORKING_DIRECTORY "${_repo_root}"
-                RESULT_VARIABLE _r
-                OUTPUT_VARIABLE _out ERROR_VARIABLE _err)
+                RESULT_VARIABLE _r)
         endif()
         if(NOT _r EQUAL 0)
-            message(FATAL_ERROR "OpenSSL build failed (exit ${_r})\n"
-                "=== stdout ===\n${_out}\n=== stderr ===\n${_err}")
+            message(FATAL_ERROR "OpenSSL build failed (exit ${_r})")
         endif()
         message(STATUS "OpenSSL build complete")
     endif()
