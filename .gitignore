@@ -31,6 +31,7 @@ compile_commands.json
 # Compiled output (except vendored prebuilt libs)
 *.o
 *.obj
+*.d
 *.exe
 *.dll
 *.so
