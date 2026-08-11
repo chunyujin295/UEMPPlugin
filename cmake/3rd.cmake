@@ -29,61 +29,66 @@ if(NOT TARGET yaml-cpp)
 endif()
 
 # ── OpenSSL ─────────────────────────────────────────────────────────────────
-# Windows: prebuilt binaries (built once via scripts/build_openssl_*)
-# Linux:   system-installed (apt install libssl-dev or equivalent)
+# Prebuilts under 3rd/lib/openssl/<platform>/.  If missing, build from
+# vendored source (one-time), then install there.  The lib directory is
+# version-controlled so other machines can clone and build immediately.
+#
+# MSVC:  scripts/build_openssl_msvc.bat  (perl Configure VC-WIN64A + nmake)
+# Linux: scripts/build_openssl.sh        (./Configure + make)
+
+list(PREPEND CMAKE_MODULE_PATH "${_repo_root}/cmake")
+
 if(NOT TARGET OpenSSL::SSL)
-    # --- Windows: direct IMPORTED GLOBAL creation ---
-    # Bypasses CMake's FindOpenSSL which has incompatible behavior across
-    # CMake 3.x / 4.x (ALIAS vs direct IMPORTED, scope visibility).
-    if(MINGW OR MSVC)
-        if(MINGW)
-            set(OPENSSL_ROOT_DIR "${_3rd_prebuilt}/openssl/mingw"
-                CACHE PATH "OpenSSL prebuilt (MinGW)" FORCE)
-            set(_ssl_lib    "${OPENSSL_ROOT_DIR}/lib/libssl.a")
-            set(_crypto_lib "${OPENSSL_ROOT_DIR}/lib/libcrypto.a")
-        elseif(MSVC)
-            set(OPENSSL_ROOT_DIR "${_3rd_prebuilt}/openssl/msvc"
-                CACHE PATH "OpenSSL prebuilt (MSVC)" FORCE)
-            set(_ssl_lib    "${OPENSSL_ROOT_DIR}/lib/libssl.lib")
-            set(_crypto_lib "${OPENSSL_ROOT_DIR}/lib/libcrypto.lib")
-        endif()
-
-        add_library(OpenSSL_SSL STATIC IMPORTED GLOBAL)
-        set_target_properties(OpenSSL_SSL PROPERTIES
-            IMPORTED_LOCATION "${_ssl_lib}"
-            INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_ROOT_DIR}/include"
-        )
-
-        add_library(OpenSSL_Crypto STATIC IMPORTED GLOBAL)
-        set_target_properties(OpenSSL_Crypto PROPERTIES
-            IMPORTED_LOCATION "${_crypto_lib}"
-            INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_ROOT_DIR}/include"
-        )
-
-        add_library(OpenSSL::SSL    ALIAS OpenSSL_SSL)
-        add_library(OpenSSL::Crypto ALIAS OpenSSL_Crypto)
-
-    # --- Linux: use system OpenSSL via find_package ---
+    if(MSVC)
+        set(_ssl_prefix "${_repo_root}/3rd/lib/openssl/MSVC")
+        set(_ssl_lib    "${_ssl_prefix}/lib/libssl.lib")
+        set(_crypto_lib "${_ssl_prefix}/lib/libcrypto.lib")
+        set(_build_cmd  "${_repo_root}/scripts/build_openssl_msvc.bat")
     else()
-        find_package(OpenSSL REQUIRED)
-        # Promote to GLOBAL so curl's try_compile can find the targets.
-        if(TARGET OpenSSL::SSL)
-            foreach(_tgt OpenSSL::SSL OpenSSL::Crypto)
-                get_target_property(_real ${_tgt} ALIASED_TARGET)
-                if(_real)
-                    set_target_properties(${_real} PROPERTIES IMPORTED_GLOBAL TRUE)
-                else()
-                    set_target_properties(${_tgt} PROPERTIES IMPORTED_GLOBAL TRUE)
-                endif()
-            endforeach()
+        set(_ssl_prefix "${_repo_root}/3rd/lib/openssl/Linux")
+        set(_ssl_lib    "${_ssl_prefix}/lib/libssl.a")
+        set(_crypto_lib "${_ssl_prefix}/lib/libcrypto.a")
+        set(_build_cmd  "${_repo_root}/scripts/build_openssl.sh")
+    endif()
+    set(_inc_dir "${_ssl_prefix}/include")
+
+    if(NOT EXISTS "${_ssl_lib}")
+        message(STATUS "Building OpenSSL from source (one-time)...")
+        if(MSVC)
+            execute_process(
+                COMMAND "${_build_cmd}" "${_ssl_prefix}"
+                WORKING_DIRECTORY "${_repo_root}"
+                RESULT_VARIABLE _r
+                OUTPUT_VARIABLE _out ERROR_VARIABLE _err)
+        else()
+            execute_process(
+                COMMAND bash "${_build_cmd}" "${_ssl_prefix}"
+                WORKING_DIRECTORY "${_repo_root}"
+                RESULT_VARIABLE _r
+                OUTPUT_VARIABLE _out ERROR_VARIABLE _err)
         endif()
+        if(NOT _r EQUAL 0)
+            message(FATAL_ERROR "OpenSSL build failed (exit ${_r})\n"
+                "=== stdout ===\n${_out}\n=== stderr ===\n${_err}")
+        endif()
+        message(STATUS "OpenSSL build complete")
     endif()
 
-    # openssl-cmake-3 wraps OpenSSL::* as ssl / crypto INTERFACE targets.
-    set(SYSTEM_OPENSSL ON CACHE BOOL "" FORCE)
-    set(OPENSSL_USE_STATIC_LIBS ON CACHE BOOL "" FORCE)
-    add_subdirectory(${_3rd_source}/openssl-cmake-3
-                     ${CMAKE_BINARY_DIR}/3rd/openssl-cmake)
+    add_library(OpenSSL_SSL STATIC IMPORTED GLOBAL)
+    set_target_properties(OpenSSL_SSL PROPERTIES
+        IMPORTED_LOCATION "${_ssl_lib}"
+        INTERFACE_INCLUDE_DIRECTORIES "${_inc_dir}")
+    add_library(OpenSSL_Crypto STATIC IMPORTED GLOBAL)
+    set_target_properties(OpenSSL_Crypto PROPERTIES
+        IMPORTED_LOCATION "${_crypto_lib}"
+        INTERFACE_INCLUDE_DIRECTORIES "${_inc_dir}")
+
+    add_library(OpenSSL::SSL    ALIAS OpenSSL_SSL)
+    add_library(OpenSSL::Crypto ALIAS OpenSSL_Crypto)
+    set(OPENSSL_FOUND TRUE CACHE BOOL "" FORCE)
+
+    # Fallback for curl's find_package if our shim doesn't intercept
+    set(OPENSSL_ROOT_DIR "${_ssl_prefix}" CACHE PATH "" FORCE)
 endif()
 
 # ── curl ────────────────────────────────────────────────────────────────────
@@ -104,6 +109,9 @@ if(NOT TARGET libcurl)
     set(CURL_DISABLE_INSTALL ON CACHE BOOL "" FORCE)
     set(CURL_ENABLE_EXPORT_TARGET OFF CACHE BOOL "" FORCE)
     set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+    # Our OpenSSL is built with no-srp; disable in curl too.
+    set(CURL_DISABLE_SRP ON CACHE BOOL "" FORCE)
     set(ENABLE_CURL_MANUAL OFF CACHE BOOL "" FORCE)
     set(BUILD_LIBCURL_DOCS OFF CACHE BOOL "" FORCE)
 

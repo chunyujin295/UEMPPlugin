@@ -2,9 +2,7 @@
 build/
 build*/
 cmake-build-*/
-
-# Prebuilt third-party binaries (regenerated via scripts/build_openssl_*)
-3rd/prebuilt/
+out/
 
 # IDE
 .idea/
@@ -19,7 +17,7 @@ cmake-build-*/
 # Code intelligence index
 .codegraph/
 
-# CMake generated (inside build dirs — safety net)
+# CMake generated
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
@@ -30,20 +28,24 @@ Makefile
 .ninja_*
 compile_commands.json
 
-# Compiled output
+# Compiled output (except vendored prebuilt libs)
 *.o
 *.obj
 *.exe
 *.dll
 *.so
 *.dylib
-
-# Libraries — track only vendored source, not build artifacts
-# (prebuilt/ is already covered above; this catches in-tree builds)
 *.a
 *.lib
 *.dll.a
 *.la
+*.ilk
+*.pdb
+*.exp
+*.res
+# Exception: OpenSSL prebuilt libs in 3rd/lib/ are version-controlled
+!3rd/lib/openssl/**/*.a
+!3rd/lib/openssl/**/*.lib
 
 # Python
 __pycache__/

@@ -65,16 +65,16 @@ target_link_libraries(common
     PRIVATE
         spdlog
         yaml-cpp
-        ssl
-        crypto
+        OpenSSL::SSL
+        OpenSSL::Crypto
         libcurl
 )
 
 # ---- Output directories ----
 set_target_properties(common PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out
 )
 
 # ---- Install (optional) ----

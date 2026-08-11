@@ -9,7 +9,7 @@ use File::Spec::Functions;
 BEGIN {
     # This method corresponds exactly to 'use OpenSSL::Util',
     # but allows us to use a platform specific file spec.
-    require '/d/Code/UEMPPlugin/3rd/openssl-3.5.7/util/perl/OpenSSL/Util.pm';
+    require 'D:/Code/UEMPPlugin/3rd/source/openssl-3.5.7/util/perl/OpenSSL/Util.pm';
     OpenSSL::Util->import();
 }
 
@@ -53,14 +53,14 @@ my $unix_shlib_wrap = catfile($there, 'util/shlib_wrap.sh');
 my $std_openssl_conf_include;
 
 if ($ARGV[0] eq '-fips') {
-    $std_openssl_conf = '/d/Code/UEMPPlugin/3rd/openssl-3.5.7/test/fips-and-base.cnf';
+    $std_openssl_conf = 'D:/Code/UEMPPlugin/3rd/source/openssl-3.5.7/test/fips-and-base.cnf';
     shift;
 
     $std_openssl_conf_include = catdir($there, 'providers');
 }
 
 if ($ARGV[0] eq '-jitter') {
-    $std_openssl_conf = '/d/Code/UEMPPlugin/3rd/openssl-3.5.7/test/default-and-jitter.cnf';
+    $std_openssl_conf = 'D:/Code/UEMPPlugin/3rd/source/openssl-3.5.7/test/default-and-jitter.cnf';
     shift;
 
     $std_openssl_conf_include = catdir($there, 'providers');
