@@ -57,7 +57,16 @@ if(NOT TARGET OpenSSL::SSL)
         file(REMOVE
             "${_3rd_source}/openssl-3.5.7/Makefile"
             "${_3rd_source}/openssl-3.5.7/configdata.pm"
+            "${_3rd_source}/openssl-3.5.7/builddata.pm"
+            "${_3rd_source}/openssl-3.5.7/installdata.pm"
+            "${_3rd_source}/openssl-3.5.7/crypto/params_idx.c"
+            "${_3rd_source}/openssl-3.5.7/crypto/buildinf.h"
         )
+        # Clean generated headers that go stale between Configure runs
+        file(GLOB _stale_hdrs "${_3rd_source}/openssl-3.5.7/include/openssl/*.h")
+        if(_stale_hdrs)
+            file(REMOVE ${_stale_hdrs})
+        endif()
         message(STATUS "Building OpenSSL from source...")
         if(MSVC)
             execute_process(
