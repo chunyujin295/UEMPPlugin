@@ -43,15 +43,17 @@ if defined VCPKG_EXE (
     )
 )
 
-REM --- Build from source ---
+REM --- Build from source (out-of-tree) ---
 echo vcpkg not available, building from source...
 where perl  >nul 2>&1 || (echo ERROR: perl not found in PATH & exit /b 1)
 where nmake >nul 2>&1 || (echo ERROR: nmake not found - run from VS Dev Cmd Prompt & exit /b 1)
 
-cd /d "%SRC%"
+set "BUILD_DIR=%PREFIX%\build-tmp"
+mkdir "%BUILD_DIR%" 2>nul
+cd /d "%BUILD_DIR%"
 
 echo Configuring OpenSSL for VC-WIN64A...
-perl Configure VC-WIN64A ^
+perl "%SRC%\Configure" VC-WIN64A ^
     --prefix="%PREFIX%" ^
     --openssldir="%PREFIX%\ssl" ^
     shared no-tests no-demos ^
@@ -68,6 +70,10 @@ if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 echo Installing...
 nmake install_sw
 if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
+
+REM Clean up build tree, keep only installed artifacts
+cd /d "%PROJECT_DIR%"
+rmdir /s /q "%BUILD_DIR%" 2>nul
 echo Done via source build.
 
 :done
