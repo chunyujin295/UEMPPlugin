@@ -3,7 +3,6 @@ REM Build/acquire OpenSSL 3.5.7 for MSVC (x64).
 REM Run from the project root in a Visual Studio x64 Native Tools Command Prompt.
 REM
 REM Usage: scripts\build_openssl_msvc.bat [prefix]
-REM   prefix defaults to build\openssl
 
 setlocal enabledelayedexpansion
 
@@ -56,7 +55,7 @@ echo Configuring OpenSSL for VC-WIN64A...
 perl Configure VC-WIN64A ^
     --prefix="%PREFIX%" ^
     --openssldir="%PREFIX%\ssl" ^
-    no-tests ^
+    no-shared no-tests ^
     no-cast no-md2 no-md4 no-mdc2 no-rc4 no-rc5 ^
     no-engine no-idea no-camellia no-ssl3 ^
     no-heartbeats no-gost no-deprecated ^
