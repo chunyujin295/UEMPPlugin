@@ -53,17 +53,6 @@ if(NOT TARGET OpenSSL::SSL)
     set(_inc_dir "${_ssl_prefix}/include")
 
     if(NOT EXISTS "${_ssl_lib}")
-        # Clean stale configure artifacts that could poison a fresh build.
-        # Only delete files that Configure regenerates (do NOT touch headers —
-        # some like types.h are static source, not generated from templates).
-        file(REMOVE
-            "${_3rd_source}/openssl-3.5.7/Makefile"
-            "${_3rd_source}/openssl-3.5.7/configdata.pm"
-            "${_3rd_source}/openssl-3.5.7/builddata.pm"
-            "${_3rd_source}/openssl-3.5.7/installdata.pm"
-            "${_3rd_source}/openssl-3.5.7/crypto/params_idx.c"
-            "${_3rd_source}/openssl-3.5.7/crypto/buildinf.h"
-        )
         message(STATUS "Building OpenSSL from source...")
         if(MSVC)
             execute_process(
