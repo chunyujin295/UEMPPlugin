@@ -20,10 +20,9 @@ if [ -f "$PREFIX/lib/libssl.a" ]; then
     exit 0
 fi
 
-BUILD_DIR="$PREFIX/build-tmp"
-mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
+cd "$SRC"
 
-"$SRC/Configure" \
+./Configure \
     --prefix="$PREFIX" --openssldir="$PREFIX/ssl" --libdir=lib \
     no-tests no-demos \
     no-cast no-md2 no-md4 no-mdc2 no-rc4 no-rc5 \
@@ -33,7 +32,6 @@ mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
 
 make -j"$(nproc)"
 make install_sw
-rm -rf "$BUILD_DIR"
 
 echo "=== Done ==="
 ls -la "$PREFIX/lib/libssl.a" "$PREFIX/lib/libcrypto.a"
