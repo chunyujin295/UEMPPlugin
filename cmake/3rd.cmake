@@ -86,6 +86,19 @@ if(NOT TARGET OpenSSL::SSL)
 
     # Fallback for curl's find_package if our shim doesn't intercept
     set(OPENSSL_ROOT_DIR "${_ssl_prefix}" CACHE PATH "" FORCE)
+
+    # Copy runtime DLLs to output dir so built binaries can find them
+    if(MSVC)
+        set(_dll_dir "${_ssl_prefix}/bin")
+        if(EXISTS "${_dll_dir}/libcrypto-3-x64.dll")
+            add_custom_target(copy_openssl_dlls ALL
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${_dll_dir}/libcrypto-3-x64.dll"
+                    "${_dll_dir}/libssl-3-x64.dll"
+                    "${CMAKE_BINARY_DIR}/out/"
+                COMMENT "Copying OpenSSL DLLs to output...")
+        endif()
+    endif()
 endif()
 
 # ── curl ────────────────────────────────────────────────────────────────────
