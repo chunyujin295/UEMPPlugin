@@ -46,6 +46,7 @@ compile_commands.json
 # Exception: OpenSSL prebuilt libs in 3rd/lib/ are version-controlled
 !3rd/lib/openssl/**/*.a
 !3rd/lib/openssl/**/*.lib
+!3rd/lib/openssl/**/*.dll
 
 # Python
 __pycache__/

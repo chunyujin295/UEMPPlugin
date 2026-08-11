@@ -24,7 +24,7 @@ cd "$SRC"
 
 ./Configure \
     --prefix="$PREFIX" --openssldir="$PREFIX/ssl" --libdir=lib \
-    no-shared no-tests \
+    no-tests \
     no-cast no-md2 no-md4 no-mdc2 no-rc4 no-rc5 \
     no-engine no-idea no-camellia no-ssl3 \
     no-heartbeats no-gost no-deprecated \
