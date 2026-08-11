@@ -1,0 +1,59 @@
+# Build output
+build/
+build*/
+cmake-build-*/
+
+# Prebuilt third-party binaries (regenerated via scripts/build_openssl_*)
+3rd/prebuilt/
+
+# IDE
+.idea/
+*.iml
+.vs/
+*.suo
+*.user
+*.sln
+*.vcxproj
+*.vcxproj.*
+
+# Code intelligence index
+.codegraph/
+
+# CMake generated (inside build dirs — safety net)
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+Makefile
+*.ninja
+.ninja_*
+compile_commands.json
+
+# Compiled output
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Libraries — track only vendored source, not build artifacts
+# (prebuilt/ is already covered above; this catches in-tree builds)
+*.a
+*.lib
+*.dll.a
+*.la
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+$RECYCLE.BIN/
+
+# Logs
+*.log
