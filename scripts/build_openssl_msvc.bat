@@ -49,12 +49,14 @@ where perl  >nul 2>&1 || (echo ERROR: perl not found in PATH & exit /b 1)
 where nmake >nul 2>&1 || (echo ERROR: nmake not found - run from VS Dev Cmd Prompt & exit /b 1)
 
 cd /d "%SRC%"
+if exist Makefile del /f Makefile 2>nul
+if exist configdata.pm del /f configdata.pm 2>nul
 
 echo Configuring OpenSSL for VC-WIN64A...
 perl Configure VC-WIN64A ^
     --prefix="%PREFIX%" ^
     --openssldir="%PREFIX%\ssl" ^
-    no-tests ^
+    shared no-tests ^
     no-cast no-md2 no-md4 no-mdc2 no-rc4 no-rc5 ^
     no-engine no-idea no-camellia no-ssl3 ^
     no-heartbeats no-gost no-deprecated ^
