@@ -68,8 +68,6 @@ compile_commands.json
 3rd/source/openssl-3.5.7/include/crypto/bn_conf.h
 3rd/source/openssl-3.5.7/include/crypto/dso_conf.h
 3rd/source/openssl-3.5.7/include/internal/param_names.h
-3rd/source/openssl-3.5.7/include/openssl/*.h
-!3rd/source/openssl-3.5.7/include/openssl/*.h.in
 3rd/source/openssl-3.5.7/providers/common/der/
 3rd/source/openssl-3.5.7/providers/common/include/prov/
 
