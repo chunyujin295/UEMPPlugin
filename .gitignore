@@ -32,6 +32,8 @@ compile_commands.json
 *.o
 *.obj
 *.d
+*.s
+*.asm
 *.exe
 *.dll
 *.so
@@ -44,6 +46,8 @@ compile_commands.json
 *.pdb
 *.exp
 *.res
+*.rc
+*.def
 # Exception: OpenSSL prebuilt libs in 3rd/lib/ are version-controlled
 !3rd/lib/openssl/**/*.a
 !3rd/lib/openssl/**/*.lib
@@ -61,6 +65,8 @@ compile_commands.json
 3rd/source/openssl-3.5.7/openssl.pc
 3rd/source/openssl-3.5.7/crypto/params_idx.c
 3rd/source/openssl-3.5.7/crypto/buildinf.h
+3rd/source/openssl-3.5.7/apps/progs.c
+3rd/source/openssl-3.5.7/apps/progs.h
 3rd/source/openssl-3.5.7/exporters/OpenSSLConfig.cmake
 3rd/source/openssl-3.5.7/exporters/OpenSSLConfigVersion.cmake
 3rd/source/openssl-3.5.7/exporters/libcrypto.pc
