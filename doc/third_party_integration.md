@@ -20,10 +20,10 @@ MinGW 未支持的原因：OpenSSL 的 `./Configure mingw64` 要求 MSYS2 风格
 │   ├── yaml-cpp-0.9.0/
 │   ├── openssl-3.5.7/         # 仅用于一次性构建，不参与 CMake 编译
 │   └── curl-8.21.0/
-└── lib/                       # 预编译静态库（版本控制，克隆即用）
+└── lib/                       # 预编译库（版本控制，克隆即用）
     └── openssl/
-        ├── MSVC/              #   include/ + lib/libssl.lib + libcrypto.lib
-        └── Linux/             #   include/ + lib/libssl.a + libcrypto.a
+        ├── MSVC/              #   bin/*.dll + lib/*.lib + include/
+        └── Linux/             #   lib/*.a + include/
 ```
 
 ## CMake 架构
@@ -55,19 +55,22 @@ CMakeLists.txt                       全局配置 + include(cmake/3rd.cmake) + a
 4. 创建 `OpenSSL_SSL` / `OpenSSL_Crypto` 为 `STATIC IMPORTED GLOBAL`
 5. 创建 `OpenSSL::SSL` / `OpenSSL::Crypto` ALIAS
 6. 设置 `OPENSSL_FOUND=TRUE`（配合 `cmake/FindOpenSSL.cmake` 拦截 curl 的重复搜索）
+7. MSVC: 添加 `copy_openssl_dlls` 构建目标，自动拷贝 DLL 到输出目录
 
 ### 构建命令（来自官方 INSTALL.md）
 
 **MSVC** (VS Developer Command Prompt):
 ```
-perl Configure VC-WIN64A --prefix=<prefix> --openssldir=<prefix>/ssl --libdir=lib no-tests ...
+perl Configure VC-WIN64A --prefix=<prefix> --openssldir=<prefix>/ssl
+    shared no-tests no-demos ...
 nmake
 nmake install_sw
 ```
 
 **Linux**:
 ```
-./Configure --prefix=<prefix> --openssldir=<prefix>/ssl --libdir=lib no-tests ...
+./Configure --prefix=<prefix> --openssldir=<prefix>/ssl --libdir=lib
+    no-tests no-demos ...
 make -j$(nproc)
 make install_sw
 ```
@@ -156,7 +159,7 @@ CURL_DISABLE_SRP ON       # TLS-SRP 已通过 no-srp 禁用
 
 | 目录 | 原始 | 保留 | 削减 | 清理内容 |
 |---|---|---|---|---|
-| `openssl-3.5.7` | 219M | ~75M | ~144M | test, fuzz, doc, demos, VMS, ms, 生成产物 |
+| `openssl-3.5.7` | 219M | ~75M | ~144M | test, fuzz, doc, demos, VMS, 空 submodule 目录, 生成产物 |
 | `curl-8.21.0` | 27M | ~13M | ~14M | tests, docs, src(cli), projects, autotools, CI |
 | `yaml-cpp-0.9.0` | 5.8M | ~0.7M | ~5.1M | test, util, docs, bazel, CI |
 | `spdlog-1.17.0` | 1.6M | ~1.3M | ~0.3M | tests, bench, example, logos, CI |

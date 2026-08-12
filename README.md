@@ -35,10 +35,10 @@
 │   │   ├── yaml-cpp-0.9.0/
 │   │   ├── curl-8.21.0/
 │   │   └── openssl-3.5.7/
-│   └── lib/                  # 预编译静态库
+│   └── lib/                  # 预编译库（版本控制，克隆即用）
 │       └── openssl/
-│           ├── MSVC/         #   libssl.lib, libcrypto.lib
-│           └── Linux/        #   libssl.a, libcrypto.a
+│           ├── MSVC/         #   bin/ (DLL) + lib/ (.lib) + include/
+│           └── Linux/        #   lib/ (.a) + include/
 └── doc/
     └── third_party_integration.md  # 三方库集成详细文档
 ```
