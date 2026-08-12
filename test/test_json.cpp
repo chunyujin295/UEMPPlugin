@@ -48,8 +48,14 @@ static void test_json_value_with_default(TestRunner& t) {
     int missingInt = j.value("ghost", 999);
     t.check(missingInt == 999, "missing key returns int default");
 
-    std::string typed = j.value("age", std::string("nope"));
-    t.check(typed == "nope", "type mismatch → default");
+    bool typedThrew = false;
+    try {
+        j.value("age", std::string("nope"));
+    } catch (const json::type_error& e) {
+        typedThrew = true;
+        printf("  type_error (expected): %s\n", e.what());
+    }
+    t.check(typedThrew, "type mismatch throws type_error");
 }
 
 static void test_json_parse_serialize(TestRunner& t) {
@@ -201,8 +207,14 @@ static void test_json_null_and_empty(TestRunner& t) {
     t.check(arr.is_array(),  "empty array is array type");
     t.check(arr.empty(),     "empty array is empty");
 
-    int v = j.value("anything", 42);
-    t.check(v == 42, "value() on null json returns default safely");
+    bool nullValueThrew = false;
+    try {
+        j.value("anything", 42);
+    } catch (const json::type_error& e) {
+        nullValueThrew = true;
+        printf("  type_error (expected): %s\n", e.what());
+    }
+    t.check(nullValueThrew, "value() on null throws type_error");
 }
 
 static void test_json_update_and_merge(TestRunner& t) {
@@ -225,11 +237,11 @@ static void test_json_update_and_merge(TestRunner& t) {
     defaults["retries"] = 3;
     defaults["port"]    = 8080;  // should NOT overwrite existing "port"
 
-    config.update(defaults);  // keys present in config are kept
+    config.update(defaults);  // update() overwrites existing keys
 
     t.check(config["timeout"] == 30,  "update added missing timeout");
     t.check(config["retries"] == 3,   "update added missing retries");
-    t.check(config["port"] == 3000,   "update preserved existing port");
+    t.check(config["port"] == 8080,   "update overwrote existing port");
 }
 
 static void test_json_comparison(TestRunner& t) {
@@ -251,17 +263,25 @@ static void test_json_comparison(TestRunner& t) {
 
 int main() {
     printf("=== nlohmann/json Tests ===\n");
-    TestRunner t;
-    test_json_basic_types(t);
-    test_json_value_with_default(t);
-    test_json_parse_serialize(t);
-    test_json_array_operations(t);
-    test_json_stl_interop(t);
-    test_json_nested_and_paths(t);
-    test_json_dump_formatting(t);
-    test_json_parse_error_handling(t);
-    test_json_null_and_empty(t);
-    test_json_update_and_merge(t);
-    test_json_comparison(t);
-    return t.finish();
+    try {
+        TestRunner t;
+        printf("[1] basic_types\n");      test_json_basic_types(t);
+        printf("[2] value_with_default\n"); test_json_value_with_default(t);
+        printf("[3] parse_serialize\n");   test_json_parse_serialize(t);
+        printf("[4] array_operations\n");  test_json_array_operations(t);
+        printf("[5] stl_interop\n");       test_json_stl_interop(t);
+        printf("[6] nested_and_paths\n");  test_json_nested_and_paths(t);
+        printf("[7] dump_formatting\n");   test_json_dump_formatting(t);
+        printf("[8] parse_error\n");       test_json_parse_error_handling(t);
+        printf("[9] null_and_empty\n");    test_json_null_and_empty(t);
+        printf("[10] update_and_merge\n"); test_json_update_and_merge(t);
+        printf("[11] comparison\n");       test_json_comparison(t);
+        return t.finish();
+    } catch (const std::exception& e) {
+        printf("\nFATAL: unhandled exception: %s\n", e.what());
+        return 1;
+    } catch (...) {
+        printf("\nFATAL: unhandled unknown exception\n");
+        return 1;
+    }
 }
