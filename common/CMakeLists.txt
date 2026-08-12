@@ -21,6 +21,7 @@ if (COMMON_BUILD_SHARED)
         PRIVATE
             LOGGER_BUILDING_LIBRARY
             YAML_TOOL_BUILDING_LIBRARY
+            HTTP_CLIENT_BUILDING_LIBRARY
     )
     set_target_properties(common PROPERTIES
         CXX_VISIBILITY_PRESET hidden
@@ -58,6 +59,7 @@ target_include_directories(common
         ${CMAKE_CURRENT_SOURCE_DIR}/private
         ${CMAKE_CURRENT_SOURCE_DIR}/private/logger
         ${CMAKE_CURRENT_SOURCE_DIR}/private/yamltool
+        ${CMAKE_CURRENT_SOURCE_DIR}/private/httpclient
 )
 
 # ---- Dependencies (set up by cmake/3rd.cmake) ----

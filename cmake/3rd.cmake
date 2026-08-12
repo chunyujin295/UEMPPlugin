@@ -131,3 +131,12 @@ if(NOT TARGET libcurl)
     add_subdirectory(${_3rd_source}/curl-8.21.0
                      ${CMAKE_BINARY_DIR}/3rd/curl)
 endif()
+
+# ── nlohmann/json ──────────────────────────────────────────────────────────────
+# Header-only JSON library.  Include as #include <nlohmann/json.hpp>.
+# Usage: json j = nlohmann::json::parse(str);  j["key"].get<int>();  …
+if(NOT TARGET nlohmann_json)
+    add_library(nlohmann_json INTERFACE)
+    target_include_directories(nlohmann_json INTERFACE
+        ${_3rd_source}/nlohmann-json-3.12.0/include)
+endif()

@@ -24,7 +24,7 @@
 ├── cmake/
 │   ├── 3rd.cmake             # 所有三方依赖集中管理
 │   └── FindOpenSSL.cmake     # curl 的 find_package(OpenSSL) 拦截 shim
-├── common/                   # 核心库（logger + yamltool）
+├── common/                   # 核心库（logger + yamltool + httpclient）
 ├── test/                     # 测试项目
 ├── scripts/
 │   ├── build_openssl.sh      # Linux 下 OpenSSL 源码构建
@@ -40,7 +40,8 @@
 │           ├── MSVC/         #   bin/ (DLL) + lib/ (.lib) + include/
 │           └── Linux/        #   lib/ (.a) + include/
 └── doc/
-    └── third_party_integration.md  # 三方库集成详细文档
+    ├── third_party_integration.md  # 三方库集成详细文档
+├── https_client_guide.md       # HTTPS 客户端文档（技术原理 + API）
 ```
 
 ## 构建
